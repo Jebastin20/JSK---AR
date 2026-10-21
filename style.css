@@ -10,28 +10,42 @@
   box-sizing: border-box;
 }
 
+html,
 body {
+  width: 100%;
+  min-height: 100%;
   margin: 0;
+}
+
+body {
   min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
   background: var(--cream);
   color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
 }
 
+button {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .brand {
+  position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 20px 6%;
-  position: relative;
-  z-index: 5;
 }
 
 .brand-mark {
   display: grid;
-  place-items: center;
+  flex: 0 0 46px;
   width: 46px;
   height: 46px;
+  place-items: center;
   border: 1px solid var(--gold);
   color: #8b6639;
   font-size: 15px;
@@ -55,24 +69,25 @@ body {
 .intro {
   position: relative;
   z-index: 5;
-  max-width: 580px;
-  margin: 5vh auto 20px;
-  padding: 0 24px;
+  width: min(100% - 40px, 580px);
+  margin: clamp(24px, 6vh, 60px) auto 0;
+  padding-bottom: 160px;
   text-align: center;
 }
 
 .eyebrow {
   color: #99754c;
   font-size: 10px;
-  font-weight: bold;
+  font-weight: 700;
   letter-spacing: 3px;
 }
 
 .intro h2 {
-  margin: 15px 0 12px;
+  margin: 16px 0 12px;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(30px, 5vw, 48px);
-  font-weight: normal;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 400;
+  line-height: 1.15;
 }
 
 .intro > p {
@@ -86,105 +101,136 @@ body {
 .camera-note {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 9px;
+  max-width: 100%;
   margin-top: 22px;
   padding: 11px 15px;
   border: 1px solid #e2d4c1;
   border-radius: 30px;
-  font-size: 11px;
   color: #645546;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .pulse {
-  flex-shrink: 0;
+  flex: 0 0 8px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #b28a55;
-}
-
-#startCameraButton,
-#soundButton {
-  border: none;
-  border-radius: 30px;
-  padding: 14px 24px;
   background: var(--gold);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
-}
-
-#startCameraButton {
-  display: block;
-  margin: 24px auto 0;
-}
-
-#startCameraButton:hover,
-#soundButton:hover:not(:disabled) {
-  background: #a98250;
-}
-
-#startCameraButton:disabled,
-#soundButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .ar-controls {
   position: fixed;
   z-index: 1000;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 12px;
+  bottom: 112px;
+  left: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 0 16px;
+  gap: 10px;
   pointer-events: none;
 }
 
 .ar-status {
-  position: static;
-  transform: none;
-  width: fit-content;
-  max-width: 100%;
-  padding: 12px 18px;
+  max-width: min(100%, 420px);
+  padding: 10px 16px;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 30px;
+  border-radius: 24px;
   background: rgba(35, 29, 24, 0.92);
   color: #fff;
   text-align: center;
   font-size: 12px;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 #soundButton {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 30px;
+  background: var(--gold);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
   pointer-events: auto;
+  touch-action: manipulation;
+}
+
+#soundButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .footer {
-  position: relative;
-  z-index: 5;
-  padding: 20px;
-  text-align: center;
-  color: var(--muted);
-  font-size: 12px;
+  position: fixed;
+  z-index: 1001;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 82px;
+  padding: 12px max(20px, env(safe-area-inset-right))
+    calc(12px + env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
+  border-top: 1px solid #e7dac9;
+  background: rgba(247, 241, 232, 0.97);
+}
+
+.footer-copy {
+  min-width: 0;
 }
 
 .footer p {
-  margin-bottom: 7px;
+  margin: 0 0 6px;
   font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
   font-style: italic;
-  font-size: 16px;
 }
 
 .footer span {
+  color: var(--muted);
   font-size: 10px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+}
+
+#startCameraButton {
+  display: grid;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  padding: 13px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--gold);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(40, 34, 28, 0.15);
+  touch-action: manipulation;
+}
+
+#startCameraButton svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#startCameraButton:disabled {
+  opacity: 0.65;
+  cursor: wait;
 }
 
 a-scene {
@@ -202,34 +248,126 @@ a-scene canvas {
 
 @media (max-width: 600px) {
   .brand {
-    padding: 15px 20px;
+    gap: 10px;
+    padding: 16px 20px;
+  }
+
+  .brand-mark {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand h1 {
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  .brand p {
+    font-size: 8px;
+    letter-spacing: 1.8px;
   }
 
   .intro {
-    margin-top: 3vh;
+    width: calc(100% - 36px);
+    margin-top: 4vh;
+    padding-bottom: 150px;
   }
 
   .intro h2 {
-    font-size: 34px;
+    font-size: clamp(30px, 8vw, 38px);
+  }
+
+  .intro > p {
+    font-size: 13px;
+  }
+
+  .eyebrow {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .camera-note {
+    font-size: 11px;
   }
 
   .ar-controls {
-    bottom: 16px;
+    right: 10px;
+    bottom: calc(94px + env(safe-area-inset-bottom));
+    left: 10px;
   }
 
   .ar-status {
     font-size: 11px;
-    padding: 10px 14px;
-  }
-
-  #startCameraButton,
-  #soundButton {
-    padding: 13px 20px;
-    font-size: 14px;
   }
 
   .footer {
-    padding-bottom: 100px;
+    min-height: 76px;
+    padding-top: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .footer p {
+    font-size: 13px;
+  }
+
+  .footer span {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+
+  #startCameraButton {
+    flex-basis: 48px;
+    width: 48px;
+    height: 48px;
   }
 }
 
+@media (max-width: 360px) {
+  .footer {
+    gap: 8px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .footer p {
+    font-size: 12px;
+  }
+
+  .footer span {
+    font-size: 8px;
+  }
+
+  .ar-status {
+    padding: 9px 12px;
+  }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .brand {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .intro {
+    margin-top: 8px;
+    padding-bottom: 115px;
+  }
+
+  .intro h2 {
+    margin: 8px 0;
+    font-size: clamp(26px, 5vw, 34px);
+  }
+
+  .camera-note {
+    margin-top: 10px;
+  }
+
+  .ar-controls {
+    bottom: 88px;
+  }
+
+  .footer {
+    min-height: 66px;
+  }
+}
