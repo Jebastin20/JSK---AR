@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#17130f" />
+  <title>JSK Frames | AR Memories</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+
+<body>
+  <header class="brand">
+    <div class="brand-mark">JSK</div>
+    <div>
+      <h1>JSK FRAMES</h1>
+      <p>MEMORIES IN MOTION</p>
+    </div>
+  </header>
+
+  <main class="intro" id="intro">
+    <span class="eyebrow">YOUR MEMORIES, REIMAGINED</span>
+    <h2>Bring your photo to life.</h2>
+    <p>Point your camera at your special photo and watch the memory come alive.</p>
+    <div class="camera-note">
+      <span class="pulse"></span>
+      Allow camera access when your browser asks.
+    </div>
+  </main>
+
+  <div class="ar-status" id="arStatus" role="status" aria-live="polite">
+    Preparing your AR experience...
+  </div>
+
+  <a-scene
+    id="arScene"
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no;"
+    color-space="sRGB"
+    renderer="colorManagement: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    embedded
+  >
+    <a-assets>
+      <video
+        id="memoryVideo"
+        src="./videos/memory.mp4"
+        preload="auto"
+        loop
+        muted
+        playsinline
+        webkit-playsinline
+        crossorigin="anonymous"
+      ></video>
+    </a-assets>
+
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false"
+    ></a-camera>
+
+    <a-entity
+      id="photoTarget"
+      mindar-image-target="targetIndex: 0"
+    >
+      <!--
+        The target image is 4:3 in this demo.
+        Width = 1, height = 0.75.
+        Adjust height to match your actual target image ratio.
+      -->
+      <a-video
+        id="memoryOverlay"
+        src="#memoryVideo"
+        width="1"
+        height="0.75"
+        position="0 0 0.01"
+        rotation="0 0 0"
+        material="shader: flat; side: double"
+      ></a-video>
+    </a-entity>
+  </a-scene>
+
+  <footer class="footer">
+    <p>Every picture holds a story.</p>
+    <span>Made with care by JSK Frames</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
