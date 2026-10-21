@@ -6,6 +6,52 @@ const status = document.querySelector("#arStatus");
 const intro = document.querySelector("#intro");
 const startCameraButton = document.querySelector("#startCameraButton");
 const soundButton = document.querySelector("#soundButton");
+const trackingPhoto = document.querySelector("#trackingPhoto");
+const memoryOverlay = document.querySelector("#memoryOverlay");
+
+function fitVideoInsidePhoto() {
+  if (
+    !trackingPhoto?.naturalWidth ||
+    !trackingPhoto?.naturalHeight ||
+    !video.videoWidth ||
+    !video.videoHeight
+  ) {
+    return;
+  }
+
+  // MindAR target width is 1 unit.
+  const photoWidth = 1;
+  const photoHeight =
+    photoWidth *
+    trackingPhoto.naturalHeight /
+    trackingPhoto.naturalWidth;
+
+  const videoAspect =
+    video.videoWidth / video.videoHeight;
+
+  // Fit the entire video inside the photo without cropping.
+  let width = photoWidth;
+  let height = width / videoAspect;
+
+  if (height > photoHeight) {
+    height = photoHeight;
+    width = height * videoAspect;
+  }
+
+  memoryOverlay.setAttribute("width", width);
+  memoryOverlay.setAttribute("height", height);
+}
+
+function updateVideoFit() {
+  if (trackingPhoto.complete && trackingPhoto.naturalWidth) {
+    fitVideoInsidePhoto();
+  }
+}
+
+trackingPhoto.addEventListener("load", updateVideoFit);
+video.addEventListener("loadedmetadata", updateVideoFit);
+
+if (trackingPhoto.complete) updateVideoFit();
 
 let cameraStarted = false;
 let targetVisible = false;
