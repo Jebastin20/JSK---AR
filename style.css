@@ -171,3 +171,30 @@ a-scene canvas {
     bottom: 25px;
   }
 }
+.ar-controls {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+#soundButton {
+  pointer-events: auto;
+  border: none;
+  border-radius: 30px;
+  padding: 14px 24px;
+  background: #bd9764;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
