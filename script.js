@@ -5,6 +5,27 @@ const status = document.querySelector("#arStatus");
 const intro = document.querySelector("#intro");
 const soundButton = document.querySelector("#soundButton");
 
+const startCameraButton = document.querySelector("#startCameraButton");
+
+startCameraButton.addEventListener("click", async () => {
+  startCameraButton.disabled = true;
+  startCameraButton.textContent = "Starting camera...";
+
+  try {
+    const arSystem = scene.systems["mindar-image-system"];
+    await arSystem.start();
+
+    startCameraButton.style.display = "none";
+    setStatus("Camera ready — point it at your photo.");
+  } catch (error) {
+    console.error("Camera startup failed:", error);
+    startCameraButton.disabled = false;
+    startCameraButton.textContent = "📷 Try Again";
+    setStatus("Camera couldn't start. Check camera permissions.");
+  }
+});
+
+
 let targetVisible = false;
 
 function setStatus(message) {

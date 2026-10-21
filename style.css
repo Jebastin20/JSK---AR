@@ -198,3 +198,19 @@ a-scene canvas {
   font-weight: 600;
   cursor: pointer;
 }
+
+#startCameraButton {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  padding: 16px 28px;
+  border: none;
+  border-radius: 30px;
+  background: #bd9764;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
