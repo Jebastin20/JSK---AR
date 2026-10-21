@@ -9,10 +9,15 @@ const soundButton = document.querySelector("#soundButton");
 const trackingPhoto = document.querySelector("#trackingPhoto");
 const memoryOverlay = document.querySelector("#memoryOverlay");
 
+
+
 function fitVideoInsidePhoto() {
   if (
-    !trackingPhoto?.naturalWidth ||
-    !trackingPhoto?.naturalHeight ||
+    !trackingPhoto ||
+    !video ||
+    !memoryOverlay ||
+    !trackingPhoto.naturalWidth ||
+    !trackingPhoto.naturalHeight ||
     !video.videoWidth ||
     !video.videoHeight
   ) {
@@ -21,15 +26,15 @@ function fitVideoInsidePhoto() {
 
   // MindAR target width is 1 unit.
   const photoWidth = 1;
+
+  // Calculate the target photo's actual aspect ratio.
   const photoHeight =
-    photoWidth *
-    trackingPhoto.naturalHeight /
-    trackingPhoto.naturalWidth;
+    photoWidth * (trackingPhoto.naturalHeight / trackingPhoto.naturalWidth);
 
-  const videoAspect =
-    video.videoWidth / video.videoHeight;
+  // Calculate the video's original aspect ratio.
+  const videoAspect = video.videoWidth / video.videoHeight;
 
-  // Fit the entire video inside the photo without cropping.
+  // Fit the complete video inside the photo without cropping.
   let width = photoWidth;
   let height = width / videoAspect;
 
@@ -40,152 +45,22 @@ function fitVideoInsidePhoto() {
 
   memoryOverlay.setAttribute("width", width);
   memoryOverlay.setAttribute("height", height);
+  memoryOverlay.setAttribute("position", "0 0 0.02");
 }
 
 function updateVideoFit() {
-  if (trackingPhoto.complete && trackingPhoto.naturalWidth) {
-    fitVideoInsidePhoto();
-  }
+  fitVideoInsidePhoto();
 }
 
-trackingPhoto.addEventListener("load", updateVideoFit);
-video.addEventListener("loadedmetadata", updateVideoFit);
-
-if (trackingPhoto.complete) updateVideoFit();
-
-let cameraStarted = false;
-let targetVisible = false;
-let soundEnabled = false;
-let startingCamera = false;
-
-function setStatus(message) {
-  status.textContent = message;
+if (trackingPhoto) {
+  trackingPhoto.addEventListener("load", updateVideoFit);
 }
 
-// Prepare video. The camera does not start automatically.
-video.muted = true;
-video.loop = true;
-video.playsInline = true;
-video.volume = 1;
-soundButton.disabled = true;
+if (video) {
+  video.addEventListener("loadedmetadata", updateVideoFit);
+}
 
-// Start AR only after the footer camera icon is tapped.
-startCameraButton.addEventListener("click", async () => {
-  if (cameraStarted || startingCamera) return;
+if (trackingPhoto?.complete && video?.readyState >= 1) {
+  updateVideoFit();
+}
 
-  startingCamera = true;
-  startCameraButton.disabled = true;
-  startCameraButton.setAttribute("aria-label", "Starting AR camera");
-  setStatus("Starting camera...");
-
-  try {
-    // Wait for A-Frame to finish initializing.
-    if (!scene.hasLoaded) {
-      await new Promise((resolve) => {
-        scene.addEventListener("loaded", resolve, { once: true });
-      });
-    }
-
-    const arSystem = scene.systems["mindar-image-system"];
-
-    if (!arSystem) {
-      throw new Error("MindAR image system is unavailable.");
-    }
-
-    await arSystem.start();
-
-    cameraStarted = true;
-    startCameraButton.setAttribute("aria-label", "AR camera is active");
-    startCameraButton.title = "AR camera is active";
-
-    setStatus("Camera ready — point it at your printed photo.");
-  } catch (error) {
-    console.error("Camera startup failed:", error);
-
-    startCameraButton.disabled = false;
-    startCameraButton.setAttribute("aria-label", "Retry AR camera");
-    setStatus("Camera could not start. Check permission and try again.");
-  } finally {
-    startingCamera = false;
-  }
-});
-
-// Play the video when MindAR recognizes the printed photo.
-target.addEventListener("targetFound", async () => {
-  targetVisible = true;
-  intro.style.display = "none";
-  soundButton.disabled = false;
-
-  // Start muted first because browsers commonly block audio autoplay.
-  video.muted = true;
-  soundEnabled = false;
-  soundButton.textContent = "🔊 Enable Sound";
-
-  setStatus("Photo recognized — playing your memory...");
-
-  try {
-    await video.play();
-    setStatus("Your memory is playing. Tap Enable Sound for audio.");
-  } catch (error) {
-    console.error("Video playback failed:", error);
-    setStatus("Video could not play. Check video/memory.mp4.");
-  }
-});
-
-// Pause playback when the photo leaves the camera view.
-target.addEventListener("targetLost", () => {
-  targetVisible = false;
-  video.pause();
-  video.muted = true;
-  soundEnabled = false;
-
-  soundButton.disabled = true;
-  soundButton.textContent = "🔊 Enable Sound";
-  intro.style.display = "";
-
-  setStatus("Point your camera at your photo.");
-});
-
-// Enable audio directly from the user's tap.
-soundButton.addEventListener("click", async () => {
-  if (!targetVisible) {
-    setStatus("Point your camera at your photo first.");
-    return;
-  }
-
-  try {
-    video.muted = false;
-    video.volume = 1;
-
-    // Calling play() inside the click handler helps satisfy
-    // browser user-gesture requirements for audio.
-    await video.play();
-
-    soundEnabled = true;
-    soundButton.textContent = "🔊 Sound On";
-    setStatus("Enjoy your memory with sound ❤️");
-  } catch (error) {
-    video.muted = true;
-    soundEnabled = false;
-
-    console.error("Could not enable video audio:", error);
-    soundButton.textContent = "🔊 Try Sound Again";
-    setStatus("Sound was blocked. Tap the sound button to retry.");
-  }
-});
-
-scene.addEventListener("arReady", () => {
-  if (cameraStarted && !targetVisible) {
-    setStatus("Camera ready — point it at your printed photo.");
-  }
-});
-
-scene.addEventListener("arError", (event) => {
-  console.error("AR error:", event.detail);
-  setStatus("AR could not start. Check camera permission and retry.");
-});
-
-video.addEventListener("error", () => {
-  console.error("Video loading error:", video.error);
-  setStatus("Video file failed to load. Check video/memory.mp4.");
-});
