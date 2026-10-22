@@ -1,4 +1,4 @@
-
+console.log("JSK Frames script loaded");
 const scene = document.querySelector("#arScene");
 const target = document.querySelector("#photoTarget");
 const video = document.querySelector("#memoryVideo");
